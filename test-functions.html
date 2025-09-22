@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Functions - Flight Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">🧪 Test Functions - Flight Management System</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-plane me-2"></i>Flight Functions</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary mb-2" onclick="testGetFlights()">Test Get Flights</button><br>
+                        <button class="btn btn-success mb-2" onclick="testCreateFlight()">Test Create Flight</button><br>
+                        <button class="btn btn-warning mb-2" onclick="testUpdateFlight()">Test Update Flight</button><br>
+                        <button class="btn btn-danger mb-2" onclick="testDeleteFlight()">Test Delete Flight</button><br>
+                        <button class="btn btn-info mb-2" onclick="testFlightStats()">Test Flight Stats</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-ticket-alt me-2"></i>Booking Functions</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary mb-2" onclick="testGetBookings()">Test Get Bookings</button><br>
+                        <button class="btn btn-success mb-2" onclick="testCreateBooking()">Test Create Booking</button><br>
+                        <button class="btn btn-warning mb-2" onclick="testUpdateBooking()">Test Update Booking</button><br>
+                        <button class="btn btn-danger mb-2" onclick="testCancelBooking()">Test Cancel Booking</button><br>
+                        <button class="btn btn-info mb-2" onclick="testBookingStats()">Test Booking Stats</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-terminal me-2"></i>Test Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <pre id="test-results" style="background: #f8f9fa; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto;"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="api-integration.js"></script>
+    <script>
+        let testResults = [];
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            testResults.push(`[${timestamp}] ${message}`);
+            document.getElementById('test-results').textContent = testResults.join('\n');
+        }
+        
+        async function testGetFlights() {
+            try {
+                log('🛫 Testing Get Flights...');
+                const response = await api.getFlights();
+                log(`✅ Success: Found ${response.data.length} flights`);
+                log(`📊 Pagination: Page ${response.pagination.page} of ${response.pagination.pages}`);
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function testCreateFlight() {
+            try {
+                log('✈️ Testing Create Flight...');
+                const flightData = {
+                    flight_code: 'TEST001',
+                    airline: 'Test Airlines',
+                    departure_airport: 'HAN',
+                    arrival_airport: 'SGN',
+                    departure_city: 'Hà Nội',
+                    arrival_city: 'TP.HCM',
+                    flight_date: '2024-12-31',
+                    departure_time: '10:00',
+                    arrival_time: '12:00',
+                    price: 200.00,
+                    total_seats: 50,
+                    status: 'available'
+                };
+                
+                const response = await api.createFlight(flightData);
+                log(`✅ Success: Created flight ${response.data.flight_code}`);
+                window.testFlightId = response.data.id;
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function testUpdateFlight() {
+            try {
+                if (!window.testFlightId) {
+                    log('⚠️ No test flight ID available. Create a flight first.');
+                    return;
+                }
+                
+                log('🔄 Testing Update Flight...');
+                const flightData = {
+                    flight_code: 'TEST001',
+                    airline: 'Updated Test Airlines',
+                    departure_airport: 'HAN',
+                    arrival_airport: 'SGN',
+                    departure_city: 'Hà Nội',
+                    arrival_city: 'TP.HCM',
+                    flight_date: '2024-12-31',
+                    departure_time: '11:00',
+                    arrival_time: '13:00',
+                    price: 250.00,
+                    total_seats: 60,
+                    status: 'available'
+                };
+                
+                const response = await api.updateFlight(window.testFlightId, flightData);
+                log(`✅ Success: Updated flight ${window.testFlightId}`);
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function testDeleteFlight() {
+            try {
+                if (!window.testFlightId) {
+                    log('⚠️ No test flight ID available. Create a flight first.');
+                    return;
+                }
+                
+                log('🗑️ Testing Delete Flight...');
+                const response = await api.deleteFlight(window.testFlightId);
+                log(`✅ Success: Deleted flight ${window.testFlightId}`);
+                window.testFlightId = null;
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function testFlightStats() {
+            try {
+                log('📊 Testing Flight Stats...');
+                const response = await api.getFlightStats();
+                log(`✅ Success: Total flights: ${response.data.total_flights}`);
+                log(`📈 Available: ${response.data.available_flights}, Booked: ${response.data.booked_flights}`);
+                log(`💰 Average price: $${response.data.average_price}`);
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function testGetBookings() {
+            try {
+                log('🎫 Testing Get Bookings...');
+                const response = await api.getBookings();
+                log(`✅ Success: Found ${response.data.length} bookings`);
+                log(`📊 Pagination: Page ${response.pagination.page} of ${response.pagination.pages}`);
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function testCreateBooking() {
+            try {
+                log('🎫 Testing Create Booking...');
+                
+                // First get available flights
+                const flightsResponse = await api.getFlights({ status: 'available' });
+                if (flightsResponse.data.length === 0) {
+                    log('⚠️ No available flights found. Create a flight first.');
+                    return;
+                }
+                
+                const flight = flightsResponse.data[0];
+                const bookingData = {
+                    flight_id: flight.id,
+                    passenger_name: 'Test Passenger',
+                    passenger_email: 'test@example.com',
+                    passenger_phone: '0123456789',
+                    seat_number: 'A01',
+                    total_amount: flight.price
+                };
+                
+                const response = await api.createBooking(bookingData);
+                log(`✅ Success: Created booking ${response.data.booking_code}`);
+                window.testBookingId = response.data.id;
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function testUpdateBooking() {
+            try {
+                if (!window.testBookingId) {
+                    log('⚠️ No test booking ID available. Create a booking first.');
+                    return;
+                }
+                
+                log('🔄 Testing Update Booking...');
+                const bookingData = {
+                    passenger_name: 'Updated Test Passenger',
+                    passenger_email: 'updated@example.com',
+                    passenger_phone: '0987654321',
+                    seat_number: 'B02',
+                    total_amount: 300.00
+                };
+                
+                const response = await api.updateBooking(window.testBookingId, bookingData);
+                log(`✅ Success: Updated booking ${window.testBookingId}`);
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function testCancelBooking() {
+            try {
+                if (!window.testBookingId) {
+                    log('⚠️ No test booking ID available. Create a booking first.');
+                    return;
+                }
+                
+                log('❌ Testing Cancel Booking...');
+                const response = await api.cancelBooking(window.testBookingId);
+                log(`✅ Success: Cancelled booking ${window.testBookingId}`);
+                window.testBookingId = null;
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function testBookingStats() {
+            try {
+                log('📊 Testing Booking Stats...');
+                const response = await api.getBookingStats();
+                log(`✅ Success: Total bookings: ${response.data.total_bookings}`);
+                log(`📈 Confirmed: ${response.data.confirmed_bookings}, Cancelled: ${response.data.cancelled_bookings}`);
+                log(`💰 Total revenue: $${response.data.total_revenue}`);
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        // Test all functions
+        async function testAll() {
+            log('🚀 Starting comprehensive test...');
+            await testGetFlights();
+            await testCreateFlight();
+            await testUpdateFlight();
+            await testFlightStats();
+            await testGetBookings();
+            await testCreateBooking();
+            await testUpdateBooking();
+            await testBookingStats();
+            await testCancelBooking();
+            await testDeleteFlight();
+            log('✅ All tests completed!');
+        }
+        
+        // Auto-run basic tests on load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🧪 Flight Management System Test Suite Loaded');
+            log('💡 Click buttons to test individual functions or run testAll() for comprehensive test');
+        });
+    </script>
+</body>
+</html>
