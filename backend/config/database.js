@@ -5,9 +5,9 @@ module.exports = {
   // Site Hà Nội (Miền Bắc)
   hanoi: {
     host: process.env.DB_HANOI_HOST || 'localhost',
-    port: process.env.DB_HANOI_PORT || 3307,
-    user: process.env.DB_HANOI_USER || 'root',
-    password: process.env.DB_HANOI_PASSWORD || '123456',
+    port: process.env.DB_HANOI_PORT || 3306,
+    user: process.env.DB_HANOI_USER || 'flight_app',
+    password: process.env.DB_HANOI_PASSWORD || 'flight_password',
     database: process.env.DB_HANOI_NAME || 'flight_management_hanoi',
     charset: 'utf8mb4',
     timezone: '+07:00'
@@ -16,9 +16,9 @@ module.exports = {
   // Site Đà Nẵng (Miền Trung)
   danang: {
     host: process.env.DB_DANANG_HOST || 'localhost',
-    port: process.env.DB_DANANG_PORT || 3307,
-    user: process.env.DB_DANANG_USER || 'root',
-    password: process.env.DB_DANANG_PASSWORD || '123456',
+    port: process.env.DB_DANANG_PORT || 3306,
+    user: process.env.DB_DANANG_USER || 'flight_app',
+    password: process.env.DB_DANANG_PASSWORD || 'flight_password',
     database: process.env.DB_DANANG_NAME || 'flight_management_danang',
     charset: 'utf8mb4',
     timezone: '+07:00'
@@ -27,9 +27,9 @@ module.exports = {
   // Site TP.HCM (Miền Nam)
   saigon: {
     host: process.env.DB_SAIGON_HOST || 'localhost',
-    port: process.env.DB_SAIGON_PORT || 3307,
-    user: process.env.DB_SAIGON_USER || 'root',
-    password: process.env.DB_SAIGON_PASSWORD || '123456',
+    port: process.env.DB_SAIGON_PORT || 3306,
+    user: process.env.DB_SAIGON_USER || 'flight_app',
+    password: process.env.DB_SAIGON_PASSWORD || 'flight_password',
     database: process.env.DB_SAIGON_NAME || 'flight_management_saigon',
     charset: 'utf8mb4',
     timezone: '+07:00'
