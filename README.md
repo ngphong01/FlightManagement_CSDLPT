@@ -1,3 +1,78 @@
+# Flight Management Monorepo
+
+This repository contains a React (Vite + TypeScript) frontend and a Node.js (Express) backend, powered by a distributed MySQL setup with 3 shards (Hanoi, Danang, Saigon).
+
+## Quick Start
+
+### 1) Databases (MySQL)
+
+Create 3 databases and import the consolidated schema into each:
+
+```
+flight_management_hanoi
+flight_management_danang
+flight_management_saigon
+```
+
+Import SQL (do this for each DB):
+
+```
+mysql -u root -p flight_management_hanoi  < db/database_full.sql
+mysql -u root -p flight_management_danang < db/database_full.sql
+mysql -u root -p flight_management_saigon < db/database_full.sql
+```
+
+If your MySQL user is not root, replace with the correct user.
+
+### 2) Backend
+
+```
+cd backend
+npm install
+node server.js
+```
+
+Default: PORT=3001. If in use, change or kill the existing process.
+
+### 3) Frontend
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+Vite default port: 5173
+
+## Configuration
+
+- Backend DB connections are configured per site in `backend/config/database.js`.
+- Frontend API base is defined in `frontend/src/lib/api.ts`.
+
+## Features
+
+- Public booking, check-in, PNR lookup
+- Separate authentication: Customer, Staff, Admin
+- Staff dashboard: check-in, gate, emergency
+- Admin pages: dashboard, flights, bookings, users, staff
+- Guest booking flow (no login), mirrored into operational bookings
+
+## Common Troubleshooting
+
+- Port 3001 in use: use `netstat -ano | findstr :3001` then `taskkill /PID <PID> /F`
+- Missing tables: ensure `db/database_full.sql` imported into all 3 databases
+- Staff login invalid: ensure staff password hashes are full bcrypt (60 chars)
+- Vite not accessible: ensure `frontend/vite.config.ts` has host `0.0.0.0`
+
+## Default Accounts (samples)
+
+- Admin: `admin` / bcrypt hash placeholder in SQL (set your real hash)
+- Staff: `NV001` with role `supervisor` (set your real hash)
+
+## License
+
+Internal project
+
 ---
 # ✈️ Flight Management - Public Folder
 
